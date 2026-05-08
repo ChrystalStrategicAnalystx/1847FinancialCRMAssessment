@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1847Financial CRM Assessment</title>
+<style>
+:root {
+  --navy:#0D2240; --navy-lt:#1a3a6b; --gold:#C9A84C; --gold-lt:#e8c96a;
+  --white:#fff; --bg:#f5f7fa; --text:#1a1a2e; --mid:#4a5568; --border:#e2e8f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.hdr{background:var(--navy);padding:16px 24px;}
+.hdr-logo{color:var(--gold);font-size:1.2rem;font-weight:700;}
+.hdr-sub{color:rgba(255,255,255,.65);font-size:.78rem;margin-top:2px;}
+.prog-wrap{background:var(--navy-lt);height:6px;}
+.prog-bar{background:var(--gold);height:6px;width:0%;transition:width .4s;}
+.wrap{max-width:660px;margin:0 auto;padding:32px 16px 80px;}
+.screen{display:none;} .screen.active{display:block;}
+
+/* GATE */
+.card{background:var(--white);border-radius:12px;padding:38px 34px;box-shadow:0 2px 18px rgba(13,34,64,.1);}
+.badge{display:inline-block;background:var(--navy);color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+.gate-title{font-size:1.65rem;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.3;}
+.gate-desc{color:var(--mid);font-size:.93rem;margin-bottom:28px;line-height:1.6;}
+.tools-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:28px;}
+.chip{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:7px 16px;font-size:.83rem;font-weight:600;color:var(--navy);}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:.83rem;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.fg input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.93rem;outline:none;color:var(--text);transition:border .2s;}
+.fg input:focus{border-color:var(--navy);}
+.err{color:#c0392b;font-size:.78rem;margin-top:4px;display:none;}
+.btn-navy{width:100%;background:var(--navy);color:var(--white);padding:13px;border:none;border-radius:8px;font-size:.97rem;font-weight:700;cursor:pointer;transition:background .2s;}
+.btn-navy:hover{background:var(--navy-lt);}
+.gate-note{font-size:.72rem;color:var(--mid);margin-top:10px;text-align:center;}
+
+/* QUESTION */
+.q-meta{display:flex;align-items:center;gap:8px;margin-bottom:18px;}
+.q-count{font-size:.78rem;color:var(--mid);}
+.q-dot{width:4px;height:4px;border-radius:50%;background:var(--border);}
+.q-cat{font-size:.72rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;}
+.q-text{font-size:1.08rem;font-weight:600;color:var(--navy);margin-bottom:22px;line-height:1.5;}
+.a-list{display:flex;flex-direction:column;gap:9px;}
+.a-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;text-align:left;cursor:pointer;font-size:.88rem;color:var(--text);transition:all .18s;line-height:1.4;}
+.a-btn:hover{border-color:var(--navy);background:#eef2f8;}
+.a-btn.sel{border-color:var(--navy);background:var(--navy);color:var(--white);}
+
+/* RESULTS */
+.r-hdr{text-align:center;margin-bottom:28px;}
+.r-name{font-size:.93rem;color:var(--mid);margin-bottom:3px;}
+.r-title{font-size:1.45rem;font-weight:700;color:var(--navy);margin-bottom:5px;}
+.r-sub{color:var(--mid);font-size:.87rem;}
+.rec-box{background:var(--navy);border-radius:12px;padding:26px;text-align:center;margin-bottom:20px;}
+.rec-lbl{color:rgba(255,255,255,.65);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.rec-tool{color:var(--white);font-size:1.85rem;font-weight:800;margin-bottom:8px;}
+.conf-pill{display:inline-block;background:var(--gold);color:var(--navy);font-size:.83rem;font-weight:700;padding:4px 16px;border-radius:20px;margin-bottom:12px;}
+.rec-tag{color:rgba(255,255,255,.82);font-size:.87rem;line-height:1.5;}
+.runner{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:15px 18px;margin-bottom:20px;}
+.r-up-lbl{font-size:.72rem;color:var(--mid);font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.r-up-tool{font-size:.97rem;font-weight:700;color:var(--navy);margin-top:2px;}
+.r-up-note{font-size:.8rem;color:var(--mid);margin-top:3px;line-height:1.4;}
+.why-lbl{font-size:.8rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+.reason{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:.87rem;color:var(--text);line-height:1.4;}
+.rdot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
+.optin{display:flex;align-items:flex-start;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:15px;margin:22px 0;cursor:pointer;}
+.optin input{width:17px;height:17px;margin-top:1px;flex-shrink:0;accent-color:var(--navy);cursor:pointer;}
+.optin-txt{font-size:.85rem;color:var(--text);line-height:1.4;}
+.optin-txt strong{display:block;margin-bottom:2px;color:var(--navy);}
+.btn-gold{width:100%;background:var(--gold);color:var(--navy);padding:14px;border:none;border-radius:8px;font-size:.97rem;font-weight:800;cursor:pointer;transition:background .2s;}
+.btn-gold:hover{background:var(--gold-lt);}
+.btn-gold:disabled{opacity:.55;cursor:not-allowed;}
+.sub-box{text-align:center;padding:18px 0;display:none;}
+.sub-icon{font-size:2.5rem;margin-bottom:10px;}
+.sub-title{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.sub-note{font-size:.83rem;color:var(--mid);}
+@media(max-width:480px){.card{padding:22px 18px;} .gate-title{font-size:1.3rem;} .rec-tool{font-size:1.5rem;}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-logo">1847Financial</div>
+  <div class="hdr-sub">CRM Assessment</div>
+</div>
+<div class="prog-wrap"><div class="prog-bar" id="pb"></div></div>
+<div class="wrap">
+
+  <!-- GATE -->
+  <div class="screen active" id="gateScreen">
+    <div class="card" style="text-align:center;">
+      <div class="badge">1847Financial</div>
+      <h1 class="gate-title">Find Your Ideal CRM</h1>
+      <p class="gate-desc">Answer ~15 questions and we'll match you to the CRM that best fits your practice — SmartOffice, Wealthbox, or Redtail.</p>
+      <div class="tools-row">
+        <div class="chip">SmartOffice</div>
+        <div class="chip">Wealthbox</div>
+        <div class="chip">Redtail</div>
+      </div>
+      <div class="fg" style="text-align:left;">
+        <label for="fpName">Your Full Name</label>
+        <input type="text" id="fpName" placeholder="First and Last Name" autocomplete="name">
+        <div class="err" id="nameErr">Please enter your name to continue.</div>
+      </div>
+      <div class="fg" style="text-align:left;">
+        <label for="fpEmail">Your Email Address</label>
+        <input type="email" id="fpEmail" placeholder="you@example.com" autocomplete="email">
+        <div class="err" id="emailErr">Please enter a valid email address.</div>
+      </div>
+      <button class="btn-navy" onclick="beginAssessment()">Begin Assessment →</button>
+      <p class="gate-note">Your information is used only for assessment tracking. Takes about 3 minutes.</p>
+    </div>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="questionScreen">
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-count" id="qCount">Question 1 of ~15</span>
+        <div class="q-dot"></div>
+        <span class="q-cat" id="qCat">Practice Profile</span>
+      </div>
+      <div class="q-text" id="qText"></div>
+      <div class="a-list" id="aList"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="resultsScreen">
+    <div class="card">
+      <div class="r-hdr">
+        <div class="badge">Your Results</div>
+        <div class="r-name" id="rName"></div>
+        <div class="r-title">Your CRM Match</div>
+        <div class="r-sub">Based on your answers, here is your recommended CRM.</div>
+      </div>
+      <div class="rec-box">
+        <div class="rec-lbl">Recommended CRM</div>
+        <div class="rec-tool" id="recTool"></div>
+        <div class="conf-pill" id="confPill"></div>
+        <div class="rec-tag" id="recTag"></div>
+      </div>
+      <div class="runner">
+        <div class="r-up-lbl">Runner-Up</div>
+        <div class="r-up-tool" id="ruTool"></div>
+        <div class="r-up-note" id="ruNote"></div>
+      </div>
+      <div style="margin-bottom:22px;">
+        <div class="why-lbl">Why This CRM Fits Your Practice</div>
+        <div id="reasons"></div>
+      </div>
+      <div class="optin" onclick="toggleOptIn(this)">
+        <input type="checkbox" id="emailOptIn">
+        <div class="optin-txt">
+          <strong>Email me my results</strong>
+          I'd like a copy of my CRM recommendation sent to my email address.
+        </div>
+      </div>
+      <button class="btn-gold" id="subBtn" onclick="submitResults()">Submit My Results</button>
+      <div class="sub-box" id="subBox">
+        <div class="sub-icon">✓</div>
+        <div class="sub-title">Results Submitted</div>
+        <div class="sub-note">Thank you. Your results have been recorded.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+// ── WEBHOOKS ──────────────────────────────────────────────
+const WEBHOOK_GATE = 'PASTE_GATE_WEBHOOK_URL_HERE';
+const WEBHOOK_SUBMISSION = 'PASTE_SUBMISSION_WEBHOOK_URL_HERE';
+
+// ── STATE ─────────────────────────────────────────────────
+let fp = {name:'',email:''};
+let scores = {SmartOffice:0,Wealthbox:0,Redtail:0};
+let answered = [];
+let qIdx = 0, qQueue = [], totalExp = 15;
+
+// ── QUESTION BANK ─────────────────────────────────────────
+// scores = [SmartOffice, Wealthbox, Redtail]
+const CORE = [
+  {id:'C01',cat:'Practice Profile',
+   text:'How would you describe your current practice focus?',
+   ans:[{t:'Primarily insurance and protection planning',s:[3,0,1]},
+        {t:'Investment management and financial planning',s:[1,3,1]},
+        {t:'A mix of insurance, investments, and financial planning',s:[2,1,2]},
+        {t:'Broker-dealer affiliated with emphasis on compliance',s:[2,0,3]}]},
+  {id:'C02',cat:'Team Size',
+   text:'How large is your team?',
+   ans:[{t:'Just me — solo advisor',s:[0,3,1]},
+        {t:'Me and 1–2 support staff',s:[1,2,2]},
+        {t:'3–5 person team',s:[2,1,3]},
+        {t:'6+ person team or enterprise office',s:[3,1,2]}]},
+  {id:'C03',cat:'Client Data',
+   text:'How important is insurance policy tracking within your CRM?',
+   ans:[{t:'Critical — I manage dozens of active policies',s:[3,0,1]},
+        {t:'Somewhat important — I have some insurance clients',s:[2,1,2]},
+        {t:'Not important — I rarely track policies in a CRM',s:[0,3,1]}]},
+  {id:'C04',cat:'Technology Fit',
+   text:'How would you describe your technology comfort level?',
+   ans:[{t:'I prefer simple, modern tools I can learn quickly',s:[0,3,1]},
+        {t:'I\'m comfortable with complex, powerful systems',s:[3,0,1]},
+        {t:'I prefer familiar, proven tools used across my industry',s:[1,1,3]}]},
+  {id:'C05',cat:'Mobile Access',
+   text:'How important is mobile access to your daily workflow?',
+   ans:[{t:'Very important — I work from my phone constantly',s:[0,3,1]},
+        {t:'Somewhat important — I use mobile occasionally',s:[1,2,2]},
+        {t:'Not very important — I\'m primarily desk-based',s:[2,0,1]}]},
+  {id:'C06',cat:'Compliance',
+   text:'What best describes your compliance environment?',
+   ans:[{t:'Broker-dealer with formal OSJ/supervisory oversight',s:[3,0,3]},
+        {t:'RIA with lighter-touch compliance requirements',s:[0,3,1]},
+        {t:'Dual-registered or transitioning models',s:[1,2,3]}]},
+  {id:'C07',cat:'Workflow',
+   text:'How do you prefer to manage client workflows and tasks?',
+   ans:[{t:'Formal, structured workflows with approvals and controls',s:[3,0,1]},
+        {t:'Visual, easy-to-build workflows I can set up myself',s:[0,3,1]},
+        {t:'Pre-built templates designed around advisor workflows',s:[1,1,3]}]},
+  {id:'C08',cat:'Implementation',
+   text:'How do you prefer to get started with new software?',
+   ans:[{t:'Guided, structured implementation with formal training',s:[3,0,2]},
+        {t:'Self-onboard and figure it out quickly',s:[0,3,0]},
+        {t:'Documented playbooks and guided onboarding at my pace',s:[1,1,3]}]}
+];
+
+const SO_BRANCH = [
+  {id:'S01',cat:'Insurance',text:'How many insurance policies do you actively manage for clients?',
+   ans:[{t:'50+ active policies',s:[3,0,0]},{t:'20–50 active policies',s:[2,0,1]},{t:'Fewer than 20 policies',s:[1,1,1]}]},
+  {id:'S02',cat:'Insurance',text:'Do you need to track policy renewals, premiums, and carrier details in your CRM?',
+   ans:[{t:'Yes — this is essential to my daily workflow',s:[3,0,0]},{t:'Occasionally, for certain clients',s:[2,0,1]},{t:'No — I manage this outside the CRM',s:[0,2,1]}]},
+  {id:'S03',cat:'Integrations',text:'How important is tight integration with Pershing NetX360 to your daily work?',
+   ans:[{t:'Critical — I use it every day',s:[3,0,1]},{t:'Important but not critical',s:[2,1,2]},{t:'I don\'t use Pershing NetX360',s:[0,2,2]}]},
+  {id:'S04',cat:'Client Data',text:'Do you frequently work with multi-generational families or complex estate planning cases?',
+   ans:[{t:'Yes — this is a core part of my practice',s:[3,0,1]},{t:'Occasionally',s:[2,1,2]},{t:'Rarely',s:[0,2,1]}]},
+  {id:'S05',cat:'Compliance',text:'How important are granular, role-based permission controls across your team?',
+   ans:[{t:'Very important — strict access control is required',s:[3,0,2]},{t:'Somewhat — basic role separation is sufficient',s:[1,1,2]},{t:'Not important',s:[0,2,1]}]},
+  {id:'S06',cat:'Reporting',text:'Do you need your CRM to produce dynamic sales, production, and revenue reports?',
+   ans:[{t:'Yes — I track production metrics closely',s:[3,0,1]},{t:'Somewhat — basic reporting is enough',s:[1,1,2]},{t:'No — I track revenue outside the CRM',s:[0,2,1]}]},
+  {id:'S07',cat:'Compliance',text:'How important is it that your CRM is purpose-built for broker-dealer environments?',
+   ans:[{t:'Very important — BD compliance is my top priority',s:[3,0,2]},{t:'Somewhat important',s:[2,0,2]},{t:'Not a key factor in my decision',s:[0,2,1]}]}
+];
+
+const WB_BRANCH = [
+  {id:'W01',cat:'User Experience',text:'How important is a modern, consumer-grade user interface to your CRM adoption?',
+   ans:[{t:'Very important — I won\'t adopt tools that feel outdated',s:[0,3,0]},{t:'Somewhat important',s:[1,2,1]},{t:'Not important — functionality matters more than looks',s:[2,0,2]}]},
+  {id:'W02',cat:'Onboarding',text:'Do you need to be up and running in your new CRM within days, not weeks?',
+   ans:[{t:'Yes — fast onboarding is critical',s:[0,3,1]},{t:'A couple of weeks is acceptable',s:[1,1,2]},{t:'I\'m willing to invest months in setup for the right tool',s:[3,0,1]}]},
+  {id:'W03',cat:'Email Sync',text:'How important is a true two-way email inbox built into your CRM?',
+   ans:[{t:'Very important — I want to send and receive from inside the CRM',s:[0,3,0]},{t:'Somewhat — email linking is enough',s:[1,1,2]},{t:'Not important',s:[2,0,1]}]},
+  {id:'W04',cat:'Mobile',text:'How much do you rely on your phone for daily client management?',
+   ans:[{t:'Constantly — I need a fast, modern mobile app',s:[0,3,1]},{t:'Occasionally — mobile is a nice feature',s:[1,2,2]},{t:'Rarely — I\'m primarily desk-based',s:[2,0,1]}]},
+  {id:'W05',cat:'Team Visibility',text:'How important is real-time team activity visibility in your daily workflow?',
+   ans:[{t:'Very important — I want a live activity stream',s:[0,3,1]},{t:'Somewhat important',s:[1,2,2]},{t:'Not important',s:[1,0,1]}]},
+  {id:'W06',cat:'Practice Model',text:'Are you primarily RIA-registered or actively moving toward an RIA model?',
+   ans:[{t:'Yes — I\'m RIA or actively transitioning',s:[0,3,1]},{t:'Dual-registered',s:[1,2,2]},{t:'Primarily broker-dealer',s:[2,0,3]}]},
+  {id:'W07',cat:'Integrations',text:'How important is an API-first CRM designed to connect with modern fintech tools?',
+   ans:[{t:'Very important — I manage my own tech stack',s:[0,3,1]},{t:'Somewhat — integrations matter but I don\'t manage them personally',s:[1,2,2]},{t:'Not important — firm-provided integrations are enough',s:[2,0,2]}]}
+];
+
+const RT_BRANCH = [
+  {id:'R01',cat:'BD Network',text:'Are you currently affiliated with a broker-dealer network?',
+   ans:[{t:'Yes — large BD network',s:[1,0,3]},{t:'Yes — smaller or regional BD',s:[2,0,2]},{t:'No — independent or RIA',s:[0,3,1]}]},
+  {id:'R02',cat:'Familiarity',text:'Have you or colleagues in your office used Redtail at a previous firm?',
+   ans:[{t:'Yes — I\'m already familiar with Redtail',s:[0,1,3]},{t:'Some colleagues have used it',s:[0,0,2]},{t:'No prior experience with Redtail',s:[1,1,0]}]},
+  {id:'R03',cat:'BD Fit',text:'How important is it that your CRM is widely recognized and supported across BD networks?',
+   ans:[{t:'Very important — firm familiarity reduces adoption friction',s:[1,0,3]},{t:'Somewhat important',s:[1,1,2]},{t:'Not important',s:[1,2,0]}]},
+  {id:'R04',cat:'Team',text:'Do you manage a multi-advisor team that requires strong task coordination?',
+   ans:[{t:'Yes — team coordination is essential',s:[2,1,3]},{t:'Small team — basic coordination needed',s:[1,2,2]},{t:'Solo advisor',s:[0,3,1]}]},
+  {id:'R05',cat:'Workflow',text:'How important are pre-built workflow templates to getting started quickly?',
+   ans:[{t:'Very important — ready-to-use templates are a must',s:[0,1,3]},{t:'I\'d prefer to build my own workflows visually',s:[1,3,0]},{t:'I need fully customizable enterprise workflows',s:[3,0,0]}]},
+  {id:'R06',cat:'Compliance',text:'Does your practice require OSJ or supervisory review workflows?',
+   ans:[{t:'Yes — supervisory review is part of our compliance model',s:[2,0,3]},{t:'Somewhat — compliance matters but isn\'t our top priority',s:[1,1,2]},{t:'No — compliance is handled outside the CRM',s:[0,2,1]}]},
+  {id:'R07',cat:'Training',text:'How important is having extensive training resources and vendor support?',
+   ans:[{t:'Very important — I want formal training and on-demand learning',s:[1,0,3]},{t:'Moderate — some training support is helpful',s:[1,1,2]},{t:'Not important — I prefer self-service',s:[0,3,0]}]}
+];
+
+const DIFF = {
+  'SmartOffice-Wealthbox':[
+    {id:'D_SW1',cat:'Key Differentiator',
+     text:'Which best describes your onboarding preference?',
+     ans:[{t:'Structured, project-style implementation with formal training',s:[3,0,0]},
+          {t:'Fast, self-start onboarding with minimal setup friction',s:[0,3,0]}]},
+    {id:'D_SW2',cat:'Key Differentiator',
+     text:'Which matters more to your day-to-day practice?',
+     ans:[{t:'Deep insurance and policy tracking built natively into the CRM',s:[3,0,0]},
+          {t:'Modern UX with an intuitive workflow and strong mobile access',s:[0,3,0]}]}
+  ],
+  'SmartOffice-Redtail':[
+    {id:'D_SR1',cat:'Key Differentiator',
+     text:'Which compliance environment best describes your firm?',
+     ans:[{t:'Highly structured BD with enterprise-level role controls and permissions',s:[3,0,0]},
+          {t:'BD network with familiar, proven compliance workflows trusted across the industry',s:[0,0,3]}]},
+    {id:'D_SR2',cat:'Key Differentiator',
+     text:'Which reporting capability matters most to you?',
+     ans:[{t:'Built-in revenue and insurance policy analytics tied directly to client records',s:[3,0,0]},
+          {t:'Strong standard reports and activity histories familiar to BD advisors',s:[0,0,3]}]}
+  ],
+  'Wealthbox-Redtail':[
+    {id:'D_WR1',cat:'Key Differentiator',
+     text:'Which best describes your practice model and priorities?',
+     ans:[{t:'Modern and growth-oriented — UX and fast adoption come first',s:[0,3,0]},
+          {t:'Established BD-affiliated practice that values proven reliability and BD recognition',s:[0,0,3]}]},
+    {id:'D_WR2',cat:'Key Differentiator',
+     text:'Which integration approach matters more to you?',
+     ans:[{t:'API-first ecosystem built to connect with modern fintech tools',s:[0,3,0]},
+          {t:'Ecosystem hub with broad, proven BD partner integrations',s:[0,0,3]}]}
+  ]
+};
+
+// ── TOOL METADATA ─────────────────────────────────────────
+const META = {
+  SmartOffice:{
+    tag:'SmartOffice is built for insurance-focused, broker-dealer advisors who need deep policy tracking, structured compliance, and enterprise-grade controls.',
+    reasons:['Insurance policy tracking — carrier, premium, renewals, and riders — is native to the platform','Purpose-built for broker-dealer environments with formal compliance and OSJ support','Highly granular, role-based permission structure for complex team configurations','Strong dynamic reporting for sales, production, and revenue analytics','Deep integration with Pershing NetX360, Envestnet, DocuSign, and core BD technology'],
+    ru:{Wealthbox:'Wealthbox offers a more modern UX and faster adoption if compliance depth is less critical.',Redtail:'Redtail provides a familiar BD compliance model and strong network recognition if enterprise controls aren\'t required.'}
+  },
+  Wealthbox:{
+    tag:'Wealthbox is the CRM for modern, growth-oriented advisors who want an intuitive platform they can adopt quickly — with strong mobile access and a clean, consumer-grade experience.',
+    reasons:['Modern, intuitive interface — most advisors self-onboard without heavy training','True two-way email inbox built directly into the CRM','Excellent native iOS/Android mobile app with strong feature parity','API-first integration philosophy — connects easily with modern fintech tools','Strong team activity stream and visual workflows ideal for growth-stage practices'],
+    ru:{SmartOffice:'SmartOffice provides deeper insurance tracking and enterprise compliance if your practice is insurance-heavy.',Redtail:'Redtail offers broader BD familiarity and proven reliability at scale if you\'re in a large network.'}
+  },
+  Redtail:{
+    tag:'Redtail is the trusted CRM for broker-dealer networks — proven at scale, compliance-ready, and recognized across the industry with extensive training resources and broad integrations.',
+    reasons:['Proven at scale in large broker-dealer networks — widely recognized and supported','Very strong audit trail and timestamped activity histories relied on in BD and OSJ reviews','Pre-built workflow templates designed specifically around common advisor workflows','Extensive training through Redtail University — live, on-demand, and advisor-focused','Strong two-way Outlook calendar and contact sync via Retriever Cloud'],
+    ru:{SmartOffice:'SmartOffice provides deeper insurance tracking and more granular enterprise controls for complex BD practices.',Wealthbox:'Wealthbox offers a more modern UX and faster self-onboarding if adoption speed is your top priority.'}
+  }
+};
+
+// ── GATE ──────────────────────────────────────────────────
+function beginAssessment(){
+  const n=document.getElementById('fpName').value.trim();
+  const e=document.getElementById('fpEmail').value.trim();
+  let ok=true;
+  if(!n){document.getElementById('nameErr').style.display='block';ok=false;}
+  else document.getElementById('nameErr').style.display='none';
+  if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){document.getElementById('emailErr').style.display='block';ok=false;}
+  else document.getElementById('emailErr').style.display='none';
+  if(!ok)return;
+  fp={name:n,email:e};
+  fire(WEBHOOK_GATE,{event:'gate_entry',fp_name:fp.name,fp_email:fp.email,
+    timestamp:new Date().toISOString(),date:etDate(),time:etTime(),
+    status:'Started',assessment:'1847Financial CRM Assessment',source:'1847Financial Adaptive Assessment'});
+  scores={SmartOffice:0,Wealthbox:0,Redtail:0};
+  answered=[];qIdx=0;
+  qQueue=[...CORE];
+  show('questionScreen');
+  renderQ();
+}
+
+// ── ENGINE ────────────────────────────────────────────────
+function renderQ(){
+  if(qIdx>=qQueue.length){finish();return;}
+  const q=qQueue[qIdx];
+  document.getElementById('qCount').textContent=`Question ${qIdx+1} of ~${totalExp}`;
+  document.getElementById('qCat').textContent=q.cat;
+  document.getElementById('qText').textContent=q.text;
+  const al=document.getElementById('aList');al.innerHTML='';
+  q.ans.forEach(a=>{
+    const b=document.createElement('button');b.className='a-btn';b.textContent=a.t;
+    b.onclick=()=>pick(q,a,b);al.appendChild(b);
+  });
+  prog();
+}
+
+function pick(q,a,btn){
+  document.querySelectorAll('.a-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  answered.push({id:q.id,answer:a.t});
+  scores.SmartOffice+=a.s[0];scores.Wealthbox+=a.s[1];scores.Redtail+=a.s[2];
+  setTimeout(()=>{
+    qIdx++;
+    if(qIdx===CORE.length)buildBranch();
+    renderQ();
+  },240);
+}
+
+function buildBranch(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const top=sorted[0][0],sec=sorted[1][0],gap=sorted[0][1]-sorted[1][1];
+  const bMap={SmartOffice:SO_BRANCH,Wealthbox:WB_BRANCH,Redtail:RT_BRANCH};
+  qQueue.push(...bMap[top].slice(0,7));
+  if(gap<=3){
+    const key=[top,sec].sort().join('-');
+    if(DIFF[key])qQueue.push(...DIFF[key]);
+  }
+  totalExp=qQueue.length;
+}
+
+// ── RESULTS ───────────────────────────────────────────────
+function finish(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const win=sorted[0][0],ru=sorted[1][0];
+  const gap=sorted[0][1]-sorted[1][1];
+  const conf=Math.min(95,Math.max(65,65+Math.round(gap*3)));
+  const m=META[win];
+  document.getElementById('rName').textContent=fp.name;
+  document.getElementById('recTool').textContent=win;
+  document.getElementById('confPill').textContent=conf+'% Match';
+  document.getElementById('recTag').textContent=m.tag;
+  document.getElementById('ruTool').textContent=ru;
+  document.getElementById('ruNote').textContent=m.ru[ru];
+  const rl=document.getElementById('reasons');rl.innerHTML='';
+  m.reasons.slice(0,4).forEach(r=>{
+    const d=document.createElement('div');d.className='reason';
+    d.innerHTML=`<div class="rdot"></div><span>${r}</span>`;rl.appendChild(d);
+  });
+  window._res={win,ru,conf,scores:{...scores},count:answered.length};
+  show('resultsScreen');
+  document.getElementById('pb').style.width='100%';
+}
+
+function toggleOptIn(w){const c=w.querySelector('input[type="checkbox"]');c.checked=!c.checked;}
+
+function submitResults(){
+  const r=window._res;
+  const eReq=document.getElementById('emailOptIn').checked?'Yes':'No';
+  document.getElementById('subBtn').disabled=true;
+  fire(WEBHOOK_SUBMISSION,{event:'full_submission',fp_name:fp.name,fp_email:fp.email,
+    timestamp:new Date().toISOString(),date:etDate(),time:etTime(),
+    recommendation:r.win,confidence_pct:r.conf,questions_answered:r.count,
+    branch_triggered:r.win+' Branch',email_requested:eReq,
+    smartoffice_score:r.scores.SmartOffice,wealthbox_score:r.scores.Wealthbox,
+    redtail_score:r.scores.Redtail,runner_up:r.ru,
+    status:'Submitted',assessment:'1847Financial CRM Assessment',answers:answered});
+  document.getElementById('subBtn').style.display='none';
+  document.querySelector('.optin').style.display='none';
+  document.getElementById('subBox').style.display='block';
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function prog(ov){const p=ov!==undefined?ov:Math.round((qIdx/totalExp)*100);document.getElementById('pb').style.width=p+'%';}
+function fire(url,data){if(!url||url.includes('PASTE_'))return;fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'}).catch(()=>{});}
+function etDate(){return new Date().toLocaleDateString('en-US',{timeZone:'America/New_York',month:'2-digit',day:'2-digit',year:'numeric'});}
+function etTime(){return new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:true});}
+</script>
+</body>
+</html>
